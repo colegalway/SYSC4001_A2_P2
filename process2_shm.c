@@ -26,9 +26,9 @@ int main () {
         usleep(100000);
     }
 
-    while(shared[1] <= -500) {
+    while(shared[1] <= 500) {
         if (shared[1] % shared[0] == 0) {
-            printf("(Process 2) Cycle %d - %d is a multiple of %d\n", cycle, shared[1], shared[0]);
+            printf("(Process 2) Cycle %d: %d is a multiple of %d\n", cycle, shared[1], shared[0]);
         } else {
             printf("(Process 2) Cycle %d\n", cycle);
         }
@@ -36,6 +36,8 @@ int main () {
         cycle++;
         usleep(250000);
     }
+    
+    shmdt(shared);
     printf("Process 2 has finished. \n");
     return 0;
 }
