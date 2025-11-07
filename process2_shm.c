@@ -1,21 +1,37 @@
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <stdlib.h>
 
 int main () {
-    int counter = 0;
+    key_t key = ftok("shmfile", 65);
+    int shmid = shmget(key, 2 * sizeof(int), 0666 | IPC_CREAT);
+    
+    if (shmid < 0) {
+        perror("shmget failed.");
+        exit(1);
+    }
+
+    int *shared = (int *) shmat(shmid, NULL, 0);
+    if (shared == (void *) -1) {
+        perror("shmat failed");
+        exit(1);
+    }
+
     int cycle = 0;
 
-    while(counter >= -500) {
-        if (counter % 3 == 0) {
-            printf("Cycle %d - %d is a multiple of 3 (Process 2)\n", cycle, counter);
-
+    while(shared[1] <= -500) {
+        if (shared[1] % shared[0] == 0) {
+            printf("(Process 2) Cycle %d - %d is a multiple of %d\n", cycle, shared[1], shared[0]);
         } else {
-            printf("Cycle %d\n", cycle);
+            printf("(Process 2) Cycle %d\n", cycle);
         }
-        counter--;
+        
         cycle++;
-        usleep(50000);
+        usleep(250000);
     }
-    printf("Process 2 has reached %d, exiting now. \n");
+    printf("Process 2 has finished. \n");
     return 0;
 }

@@ -16,6 +16,6 @@ int main () {
         cycle++;
         usleep(50000);
     }
-    printf("Process 2 has reached %d, exiting now. \n");
+    printf("Process 2 has reached %d, exiting now. \n", counter);
     return 0;
 }
